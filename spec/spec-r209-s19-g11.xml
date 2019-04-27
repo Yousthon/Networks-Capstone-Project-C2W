@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+     There has to be one entity for each item to be referenced.
+     An alternate method (rfc include) is described in the references. -->
+
+<!ENTITY RFC2629 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2629.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs),
+     please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+     (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- do not display copyright and other IETF-related stuff -->
+<?rfc private="(c) GROUP XXXX, 2013" ?>
+
+<rfc category="info" docName="draft-ietf-xml2rfc-template-05" ipr="trust200902">
+  <!-- category values: std, bcp, info, exp, and historic
+     ipr values: full3667, noModification3667, noDerivatives3667
+     you can add the attributes updates="NNNN" and obsoletes="NNNN"
+     they will automatically be output with "(if approved)" -->
+
+  <!-- ***** FRONT MATTER ***** -->
+
+  <front>
+    <!-- The abbreviated title is used in the page header - it is only necessary if the
+         full title is longer than 39 characters -->
+
+    <title abbrev="Spec C2W - Groupe 11"> [Groupe 11] - Proposition de spécification du protocole C2W 
+    </title>
+
+    <!-- add 'role="editor"' below for the editors if appropriate -->
+
+     <author fullname="COULIBALY FANFOL ISMAEL RAOUL" initials="C.F.I.R"
+            surname="FANFOL">
+      <organization>IMT Atlantique</organization>
+      <address>
+        <postal>
+          <street>655 Avenue du Technopôle</street>
+          <city>Brest</city>
+          <region>Bretagne</region>
+          <code>29280</code>
+          <country>France</country>
+        </postal>
+        <email>fanfol-ismael-raoul.coulibaly@imt-atlantique.net</email>
+      </address>
+    </author>
+
+    <author fullname="KOUASSI BEYEGBIN BAUDOUIN VENCESLAS" initials="K.B.B.V"
+            surname="VENCESLAS">
+      <organization>IMT Atlantique</organization>
+      <address>
+        <postal>
+          <street>655 Avenue du Technopôle</street>
+          <city>Brest</city>
+          <region>Bretagne</region>
+          <code>29280</code>
+          <country>France</country>
+        </postal>
+        <email>beyegbin-baudouin-venceslas.kouassi@imt-atlantique.net</email>
+      </address>
+    </author>
+
+    <date month="february" year="2019" />
+
+    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
+         in the current day for you. If only the current year is specified, xml2rfc will fill
+	 in the current day and month for you. If the year is not the current one, it is
+	 necessary to specify at least a month (xml2rfc assumes day="1" if not specified for the
+	 purpose of calculating the expiry date).  With drafts it is normally sufficient to
+	 specify just the year. -->
+
+    <keyword>c2w</keyword>
+
+    <!-- Keywords will be incorporated into HTML output
+         files in a meta tag but they have no effect on text or nroff
+         output. If you submit your draft to the RFC Editor, the
+         keywords will be used for the search engine. -->
+
+    <abstract>
+      <t>
+        Ce document est une proposition d'une version texte du protocole de communication c2w. 
+         L'objectif de ce protocole est de permettre à plusieurs utilisateurs de se connecter à un serveur offrant plusieurs flux vidéos, 
+         de sélectionner une vidéo et de causer avec les autres utilisateurs regardant la même vidéo.
+    </t>
+    </abstract>
+  </front>
+ 
+   <middle>
+    <section title="Introduction">
+      <t>
+        Le protocole c2w doit pouvoir utiliser TCP ou UDP, et être capable de supporter 
+        toutes les exigences de communication de l'application, c'est-à-dire qu'il doit définir 
+        tous les messages nécessaires pour réaliser les étapes décrites ci-dessous.
+        L'application c2w fonctionne comme suit:    
+
+        <list counter="reqs" hangIndent="2">
+           <t> 1. sa fenêtre d'enregistrement dans laquelle sont indiqués le nom (ou l'adresse IP) 
+                et le numéro de port de l'utilisateur du serveur ainsi que son nom d'utilisateur.</t>
+
+           <t>2. si la connexion est réussie, elle affiche une nouvelle fenêtre dans la "pièce principale". 
+               Cette fenêtre affiche la liste de tous les utilisateurs du  système (en précisant s'ils sont disponibles "A" 
+               (c'est-à-dire dans la salle principale) ou s'ils sont dans une salle "M"). </t>
+
+           <t> 3. Lorsque l'utilisateur décide de rejoindre l'un des films, 
+               l'application affiche une troisième fenêtre avec la liste de tous les utilisateurs dans cette salle spécifique, 
+               la vidéo correspondante, une zone de chat et une zone de saisie de texte, 
+               où l'utilisateur peut saisir des messages à d'autres utilisateurs regardant le même film.</t>
+
+           <t>4.Le film et la fenêtre principale ont un bouton leave que l'utilisateur peut appuyer. 
+                Si l'utilisateur se trouve dans une salle de cinéma, il retourne dans la salle principale. 
+                Si l'utilisateur se trouve dans la pièce principale, il quitte le système (retour à la fenêtre de connexion).</t>
+        </list> 
+    C'est donc cela que nous nous attèlerons à gérer dans la suite de ce document. 
+      </t>
+    </section>
+
+    <section title="Format des paquets">
+        <t>
+            A ce niveau,nous décrivons les différents formats de messages 
+            qui seront échangés entre les utilisateurs et le serveur.
+        </t>
+
+        <section title="Description générale">
+         <t>
+          Les échanges entre les utilisateurs et le serveur seront gérés par l'echange 
+          de plusieurs paquets.  Ci-dessous, nous montrons le format général de ces
+          paquets:
+         </t>
+         <t>
+         &lt;TAILLE&gt;:&lt;TYPE&gt;:&lt;ID_MSG&gt;:&lt;MESSAGE&gt;:&lt;CRLF&gt;
+         </t>
+        <t>
+         Ci-dessous, nous décrivons les différents éléments du format des messages échangés : 
+           <list counter="reqs" hangIndent="2">
+            
+             <t> TAILLE : il s'agit du nombre de caractères total du message envoyé</t>
+             <t> TYPE : c'est un identifiant qui détermine le type de message envoyé.
+                Les différents types sont listés dans le tableau 1 ci-dessous.</t>
+
+             <t> ID_MSG : Ce champ represente le numero du paquet envoyé. Il est initialisé à
+                1 et incrementé à chaque nouvelle émission.Il permet d’identifier de facon unique chaque paquet.
+                Il permet de controler les envois et receptions afin de gérer l’ordre et les pertes de paquets.
+                Dans la partie relative à la fiabilité, nous décrivons son importance.</t>
+
+             <t> MESSAGE : Ce champ englobe toutes les donnees du message que l’emetteur (seveur ou utilisateur) souhaite envoyer 
+			          et donc diffère d'un paquet à un autre selon le type. </t> 
+                          
+             <t> CRLF : CR représente le caractère ASCII "Carriage Return" (code décimal ASCII 13) 
+                 et LF représente le caractère ASCII "Line Feed" (code décimal ASCII 10).
+                 Ce champ marque la fin du paquet envoyé.</t>
+             </list>
+        </t>
+
+
+        <texttable anchor="table_example_1" title="Les types de messages échangés">
+          <preamble>Le tableau 1 ci-dessous présente les différents types de messages échangés entre les utilisateurs et le serveur.</preamble>
+
+          <ttcol align="center">TYPE</ttcol>
+
+          <ttcol align="center">DEFINITION</ttcol>
+          
+          <c>AUT</c>
+
+          <c>Authentification d'un utilisateur dont le username est déjà enregistré sur le serveur</c>
+
+          <c>MSG_REC</c>
+
+          <c>Message reçu (Acquittement)</c>
+
+          <c>MSG_NON_REC</c>
+
+          <c>Message non reçu (Acquittement négatif)</c>
+
+          <c>AUT_R</c>
+
+          <c>Authentification réussie</c>
+          
+          <c>AUT_E</c>
+
+          <c>Echec de l'authentification</c>
+
+          <c>LIST_FILM</c>
+
+          <c>Liste des films disponibles</c>
+
+          <c>LIST_USER</c>
+
+          <c>Liste des utilisateurs présents dans la Main Room et dans les Movies Room, avec leur status</c>
+ 
+          <c>MARC</c>
+
+          <c>Message de chat dans la Main Room envoyé au serveur</c>
+		  
+		      <c>MARC_DIFF</c>
+
+          <c>Message de chat diffusé aux clients dans la Main Room </c>
+
+          <c>LEAVE_MAR</c>
+
+          <c>Message pour quitter la Main Room</c>
+
+          <c>SELECT_FILM</c>
+          
+          <c>Sélectionner un film disponible dans la Main Room</c>
+
+          <c>LIST_USER_MOR</c>
+
+          <c>Liste des utilisateurs dans la Movie Room</c>
+
+          <c>MORC</c>
+
+          <c>Message de chat dans la Movie Room envoyé au serveur</c>
+		  
+		      <c>MORC_DIFF</c>
+
+          <c>Message de chat diffusé aux clients dans la Movie Room </c>
+ 
+          <c>LEAVE_MOR</c>
+
+          <c>Message pour quitter la Movie Room</c>
+
+        </texttable>
+
+        </section>
+        
+        <section title="Description détaillée">
+			<t>
+				A ce niveau, nous décrivons de façon détaillée les types de messages échangés entre les utilisateurs 
+				et le serveur dans 3 cas :lors de la connexion au serveur, des échanges au niveau de la 'Main Room' et 
+				des échanges au niveau des 'Movie Rooms'.
+				Puisque les paquets de type 'MSG_REC' et 'MSG_NON_REC' seront utilisés dans ces 3 cas, nous les décrirons dans un premier temps.
+			</t>
+
+			<t>
+				Un paquet de type 'MSG_REC' ou 'MSG_NON_REC' est en effet un paquet envoyé d'un client vers le serveur ou du serveur vers un client, 
+				qui represente un acquittement ou un non acquittement. Le type 'MSG_REC' permet au destinataire de s'assurer qu'un paquet numéroté ID_MSG 
+        a été reçu par l'émetteur et le type 'MSG_NON_REC' permet de signaler le contraire.  
+				Le format de ce paquet est le suivant : 
+			</t>
+			<t>
+				&lt;TAILLE&gt;:&lt;TYPE&gt;:&lt;ID_MSG&gt;:&lt;CRLF&gt;
+			</t>
+			<t>
+				Ci-dessous, nous décrivons les différents éléments du format de ce message :  
+				<list counter="reqs" hangIndent="2">
+				
+					<t> TYPE : 'MSG_REC' pour dire que le paquet est un acquittement ou 'MSG_NON_REC' pour dire que le message est un non acquittement.</t>
+
+					<t> ID_MSG : Il s'agit de l'identifiant du dernier message reçu qui n'est pas un acquittement ou un non acquittement.</t> 
+				</list>
+            </t>
+
+            <section title="Formats des paquets échangés lors de la connexion au serveur">
+               <t>
+                  Lors de la connexion du client au serveur, plusieurs paquets sont échangés. 
+                  Il s'agit notamment des messages de types AUT, AUT_E, AUT_R, et MSG_REC.
+                </t>
+                
+                <section title="Authentification : message du type 'AUT'">
+                <t>
+                  Lorsqu'un utilisateur souhaite se connecter au serveur, un paquet est envoyé au serveur selon le format suivant:
+                </t>
+				        <t> &lt;TAILLE&gt;:&lt;TYPE&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;CRLF&gt;</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t> TYPE : égal à 'AUT' pour signaler qu'il sagit d'une demande de connexion</t>
+						<t>USERNAME : c'est le nom d'utilisateur fournit par le client lors la demande de connexion. 
+						Il sera unique c'est-à-dire que deux personnes ne pourront pas 
+						s'authentifier avec le même nom d'utilisateur. De même il contiendra uniquement des caractères alphanumériques</t>
+						
+					</list>
+				</t>
+                </section>
+
+                <section title="Authentification réussie: message du type 'AUT_R'">
+                <t>
+                  Lorsque le nom est d'utilisateur respecte les contraintes ci-dessus et que le serveur n'est pas saturé alors 
+				  l'authentification réussie et le serveur envoie le paquet suivant à l'utilisateur:
+                </t>
+				<t>&lt;TAILLE&gt;:&lt;AUT_R&gt;:&lt;ID_MSG&gt;:&lt;MESSAGE&gt;:&lt;CRLF&gt;</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>AUT_R :signifie qu'il s'agit d'un paquet de réussite de connexion</t>
+						<t>MESSAGE : le serveur enverra comme message à l'utilisateur le mot "Réussite". </t>		
+					</list>
+				</t>
+                </section>
+
+                <section title="Authentification échouée : message du type 'AUT_E'">
+                <t>
+                  En cas d'échec lors de la connexion (non respect des contraintes sur le nom d'utilisateur ou serveur saturé), 
+				  un paquet est envoyé à l'utlisateur selon le format suivant.
+                </t>
+				<t>&lt;TAILLE&gt;:&lt;AUT_E&gt;:&lt;ID_MSG&gt;:&lt;MESSAGE&gt;:&lt;CRLF&gt;</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>AUT_E :signifie qu'il s'agit d'un paquet d'échec de connexion</t>
+						<t>MESSAGE : le serveur enverra comme message à l'utilisateur le mot "Echec". </t>		
+					</list>
+				</t>
+                </section>
+            </section>
+
+            <section title="Formats des paquets échangés dans la 'Main Room'">
+              <t>
+                Dans la 'Main Room', plusieurs messages sont également échangés entre les utilisateurs et le serveur. 
+                Il s'agit notamment des messages de types LIST_FILM, MSG_REC, LIST_USER_MAR, MARC, MARC_DIFF, SELECT_FILM et LEAVE_MAR.
+              </t>
+             
+                <section title="Liste des films disponibles: message du type 'LIST_FILM'">
+                <t>
+                  Lorsqu'un utilisateur réussit à se connecter au serveur, ce dernier envoie à l'utilisateur la liste des films 
+				 (noms,adresses,ports) disponible à travers un paquet dont le format est le suivant:
+                </t>
+				<t>
+					&lt;TAILLE&gt;:&lt;LIST_FILM&gt;:&lt;ID_MSG&gt;:&lt;NOM_FILM1&gt;:&lt;ADDRESS_FILM1&gt;:&lt;PORT_FILM1&gt;:
+					&lt;NOM_FILM2&gt;:&lt;ADDRESS_FILM2&gt;:&lt;PORT_FILM2&gt;:...:&lt;NOM_FILMn&gt;:&lt;ADDRESS_FILMn&gt;:&lt;PORT_FILMn&gt;:&lt;CRLF&gt;
+				</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>LIST_FILM :signifie qu'il s'agit d'un paquet contenant la liste des films.</t>
+					</list>
+				</t>
+                </section>
+
+                <section title=" Liste des utlisateurs dans la Main Room: message du type 'LIST_USER'">
+                <t>
+					De même après la réussite de la connexion au serveur, ce dernier envoie à l'utilisateur la liste des utilisateurs
+					(nom d'utilsateur) présents dans la Main Room et ceux présents dans les movie room en indiquant leur status, 
+          à travers un paquet dont le format est le suivant:
+                </t>
+				<t>
+					&lt;TAILLE&gt;:&lt;LIST_USER_MAR&gt;:&lt;ID_MSG&gt;:&lt;USERNAME1&gt;:&lt;STATUS1&gt;:&lt;USERNAME2&gt;:&lt;STATUS2&gt;:...:&lt;USERNAMEn&gt;:&lt;STATUSn&gt;:&lt;CRLF&gt;
+				</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>LIST_USER :signifie qu'il s'agit d'un paquet contenant la liste des utilisateurs connectés avec leur status (A ou M).	</t>
+					</list>
+				</t>
+                </section>
+
+                <section title="Message de chat dans la Main Room : message du type 'MARC' et 'MARC_DIFF'">
+                <t>
+					Dans la Main Room lorsque les utilisateurs souhaitent communiquer les messages sont d'abord transmis au serveur et ensuite 
+					envoyés par le serveur aux utilisateurs étant dans cette Main Room.				 
+				</t>
+				<t>
+					* Les paquets transmis au serveur auront le format suivant:
+				</t>
+				<t>
+					&lt;TAILLE&gt;:&lt;MARC&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;INFORMATION&gt;:&lt;CRLF&gt;
+				</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>MARC :indique qu'il s'agit d'un paquet contenant le message d'un utilisateur de la Main Room et devant 
+						être transmit plus tard aux autres qui y sont présents</t>
+						<t>INFORMATION:c'est le message qu'un utilisateur de la Main Room souhaite transmettre</t>
+					</list>
+				</t>
+				<t>
+					* Les paquets transmis par le serveur aux utilisateurs présents dans la Main Room (y compris l'emetteur) auront le format suivant:
+				</t>
+				<t>
+					&lt;TAILLE&gt;:&lt;MARC_DIFF&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;INFORMATION&gt;:&lt;CRLF&gt;
+				</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>MARC_DIFF :indique qu'il s'agit d'un paquet venant du serveur, contenant le message d'un utilisateur 
+							de la Main Room et devant être transmit aux autres qui y sont présents</t>
+						<t>INFORMATION:c'est le message qu'un utilisateur de la Main Room souhaite transmettre</t>
+					</list>
+				</t>
+                </section>
+                <section title="Sélectionner un film disponible dans la Main Room : message du type 'SELECT_FILM'">
+                <t>
+					Lorsque le client sélectionne un film présent dans la Main Room, un paquet est envoyé au serveur selon le format suivant:
+                </t>
+				<t>
+				&lt;TAILLE&gt;:&lt;SELECT_FILM&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;NOM_FILM&gt;:&lt;ADDRESS_FILM&gt;:&lt;PORT_FILM&gt;:&lt;CRLF&gt;
+				</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>SELECT_FILM :indique qu'il s'agit d'un paquet pour la selection d'un film</t>
+					</list>
+				</t>
+                </section>
+                <section title="Quitter la Main Room : message du type 'LEAVE_MAR'">
+                <t>
+					Si l'utilisateur souhaite quitter la Main Room, le paquet ci-dessous est envoyé au serveur:  
+                </t>
+				<t>
+					&lt;TAILLE&gt;:&lt;LEAVE_MAR&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;CRLF&gt;
+				</t>
+				<t>
+					<list counter="reqs" hangIndent="2">
+						<t>LEAVE_MAR :indique qu'il s'agit d'un paquet pour la demande de déconnexion au serveur</t>
+					</list>
+				</t>
+                </section>
+             
+        </section>
+
+			<section title="Formats des paquets échangés dans la 'Movie Room'">
+				<t>
+					Dans la 'Movie Room', plusieurs messages sont également échangés entre les utilisateurs et le serveur. 
+					Il s'agit notamment des messages de types MSG_REC, LIST_USER_MOR, MORC et LEAVE_MOR.
+				</t>
+
+                <section title=" Liste des utlisateurs dans la Movie Room: message du type 'LIST_USER_MOR'">
+					<t>
+						Après la réussite de la demande de film au serveur, ce dernier envoie à l'utilisateur la liste des utilisateurs
+						(nom d'utilsateur) présents dans la Movie Room demandée à travers un paquet dont le format est le suivant:.
+					</t>
+					<t>
+						&lt;TAILLE&gt;:&lt;LIST_USER_MOR&gt;:&lt;ID_MSG&gt;:&lt;USERNAME1&gt;:&lt;USERNAME2&gt;:...:&lt;USERNAMEn&gt;:&lt;CRLF&gt;
+					</t>
+					<t>
+						<list counter="reqs" hangIndent="2">
+							<t>LIST_USER_MOR :signifie qu'il s'agit d'un paquet contenant la liste des utilisateurs présents dans la Movie Room</t>
+						</list>
+					</t>
+                </section>
+
+                <section title="Message de chat dans la Movie Room : message du type 'MORC' et 'MORC_DIFF'">
+					<t>
+						Dans la Movie Room lorsque les utilisateurs souhaitent communiquer les messages sont d'abord transmis au serveur et ensuite 
+						envoyés par le serveur aux utilisateurs étant dans cette Movie Room.				 
+					</t>
+					<t>
+						* Les paquets transmis au serveur auront le format suivant:
+					</t>
+					<t>
+						&lt;TAILLE&gt;:&lt;MORC&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;ADDRESS_IP_FILM&gt;:&lt;PORT_FILM&gt;:&lt;INFORMATION&gt;:&lt;CRLF&gt;
+					</t>
+					<t>
+						<list counter="reqs" hangIndent="2">
+							<t>
+                  MORC :indique qu'il s'agit d'un paquet contenant le message d'un utilisateur de la Movie Room et devant 
+							    être transmit plus tard aux autres qui y sont présents
+              </t>
+							<t>
+                  INFORMATION:c'est le message qu'un utilisateur de la Movie Room souhaite transmettre
+              </t>
+              <t>
+                  ADRESSE_IP_FILM et PORT_FILM correspondante aux adresse et port du film en question. Ces données prmettront au serveur de savoir 
+                  vers quel movie Room rediriger le message
+              </t>
+						</list>
+					</t>
+					<t>
+						* Les paquets transmis par le serveur aux utilisateurs présents dans la Movie Room (y compris l'emetteur) auront le format suivant:
+					</t>
+					<t>
+						&lt;TAILLE&gt;:&lt;MORC_DIFF&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;ADDRESS_IP_FILM&gt;:&lt;PORT_FILM&gt;:&lt;INFORMATION&gt;:&lt;CRLF&gt;
+					</t>
+					<t>
+						<list counter="reqs" hangIndent="2">
+							<t>MORC_DIFF :indique qu'il s'agit d'un paquet venant du serveur, contenant le message d'un utilisateur 
+								de la Movie Room et devant être transmit aux autres qui y sont présents</t>
+							<t>INFORMATION:c'est le message qu'un utilisateur de la Movie Room souhaite transmettre</t>
+						</list>
+					</t>
+                </section>
+                
+                <section title="Quitter la Movie	 Room : message du type 'LEAVE_MORC'">
+					<t>
+						Si l'utilisateur souhaite quitter la Movie Room et retourner dans la Main Room, le paquet ci-dessous est envoyé au serveur:  
+					</t>
+					<t>
+						&lt;TAILLE&gt;:&lt;LEAVE_MOR&gt;:&lt;ID_MSG&gt;:&lt;USERNAME&gt;:&lt;CRLF&gt;
+					</t>
+					<t>
+						<list counter="reqs" hangIndent="2">
+							<t>LEAVE_MOR :indique qu'il s'agit d'un paquet pour quitter la Movie Room </t>
+						</list>
+					</t>
+                </section>
+            
+			</section>
+                                                                                                                                               
+     </section>
+    </section>
+
+   <section title="Fiabilisation">
+      <t>
+          Il est primordial que le protocole C2W puisse fonctionner au dessus de TCP/UDP. Il doit donc pallier les imperfections de ces protocoles, 
+          notamment la perte des paquets, le dé-séquencement des paquets, les doublons et les retards dans la transmission. C'est pourquoi une fiabilisation 
+          de ce protocole soit être assurée par plusieurs éléments que nous décrivons dans la suite.  
+			</t>
+       <section title="Le protocole ARQ à fenêtre glissante : Sliding Window ARQ">
+          <t>
+             Afin d'assurer la fiabilité du protocole C2W, il nous faut gérer les erreurs. Ainsi, si un paquet est perdu,
+             endommagé ou corrompu durant la transmission, il nous faut la retransmettre. la technique de controle d'erreur 
+             qui assure cela est appelée ARQ (Automatic Repeat Request).
+          </t>
+          <t>
+            Dans cette technique, si le paquet transmis par l'emetteur arrive sans problème au récepteur, ce dernier environment
+            un message d'acquitemment à l'émetteur pour confirmer la réception du paquet. Dans notre cas, il s'agit du message de type 'MSG_REC'. 
+            En revanche, si le paquet transmis par l'émetteur est perdu ou corrompu, le récepteur répond par un acquittement négatif. 
+            Par conséquent, l'émetteur retransmet le paquet en question. L'expéditeur dispose également d'un minuteur, 
+            pour qu'en cas de perte du message d'acquittement, le paquet soit retransmis. 
+          </t>
+          <t>
+            Il existe deux types d'ARQ, notamment le "Stop and Wait ARQ" et le "Sliding Window ARQ". Bien que plus complexe à implémenter, 
+            nous avons choisi le second par soucis d'efficacité. Dans ce protocole, on a la notion de fenêtre glissante. 
+            L'émetteur peut envoyer N paquets sur le réseau avant d'attendre un acquitemment du recepteur. Une copie des paquets envoyés 
+            est conservée coté émetteur jusqu'à l'arrivée d'un acquittement. Chaque paquet est numéroté avec un numéro de sequence 
+            (ID_MSG dans notre cas). Une fenêtre est une collection de numéros de séquence consécutifs ou adjacents. Et la taille 
+            de la collection est la taille de la fenêtre de l'émetteur. Le "Sliding Window ARQ" comprend deux types d'approches,
+            notamment le "Go-Back-N ARQ" et le "Selective Repeat ARQ".                  
+
+            <list counter="reqs" hangIndent="2">
+              <t>
+                Go-Back-N ARQ : La spécificité de cette approche est qu'en cas de perte ou lorsqu'il y a une erreur sur le paquet N, 
+                le recepteur rejette tous les paquets suivants. Il en informe l'emetteur qui doit tous les renvoyer.
+                Cela ralentit donc la transmission mais simplifie les traitements coté recepteur. La taille de la fenêtre 
+                du récepteur est toujours égale à 1 et les paquets arrivent toujpurs en ordre.
+              </t>
+      
+              <t>
+                Selective Repeat ARQ : La spécificité de cette approche est que seuls les paquets perdus ou erronnés sont retransmis.
+                En effet, un acquittement négatif avec le numero de séquence attendu est envoyé à l'émetteur 
+                avant l'expiration du timer. Cette méthode garantit donc une transmission plus rapide. 
+              </t>
+
+            </list>
+
+            Ainsi, pour mieux garantir la fiabilité du protocole C2W, nous avons choisi le "Selective Repeat ARQ"
+            avec une fenêtre de taille 2 coté émetteur et récepteur, et un timer de 2 secondes.
+        </t>
+      </section>
+
+       <section title="Le champ ID_MSG : Gestion du dé-séquencement des messages">
+         <t>
+            Comme décrit précédemment, ce champ permet d'identifier chaque message de facon unique. Cela nous permet donc de bien 
+            reconstituer ou ordonner les messages échangés. Par ailleurs, Il pemet de détecter les éventuels doublons des messages et 
+            d'associer à chaque message l'acquitement correspondant. C'est ce champ qui sera utilisé par ailleurs pour la réalisation 
+            des fenêtes de glissements. 
+          </t>
+        </section>
+
+       <section title="Les messages d'acquittement">
+         <t>
+            Les différents messages échangés, à l'exception des acquittements, font l'objet d'un acquittement positif 
+            ou négatif par le biais d'un message de type : 'MSG_REC' ou 'MSG_NON_REC'. Cela permet donc  de s'assurer 
+            de la réception effective du message par le destinataire.
+          </t>
+        </section>
+
+       <section title="Caractéristiques du serveur">
+          	
+            <section title="Format des données échangées">
+              <t>Le nom des films est une chaine de caractères alphanumériques (Ne comporte que des chiffres et des lettres, 
+                    ainsi que le caractère espace) 
+              </t>
+                  
+              <t>
+                Le nom d'utilsiateur est une chaine de caractères alphanumériques unique pour chaque utilsiateur et 
+                n'excedant pas 20 caractères. Il est refusé au cas ou un utilisateur connecté a le même. 
+              </t>
+                  
+              <t>
+                Les chaines de caractères sont stockées sur un octet et codées en UTF-8 et le contenu du messages 
+                échangés peut contenir tous les caractères sauf ":". 
+              </t>
+                  
+              <t>
+                Le nom des films est une chaine de caractères alphanumériques (Ne comporte que des chiffres et des lettres, 
+                ainsi que le caractère espace) 
+              </t>				
+            </section>
+
+            <section title="Spécificités du serveur">
+              <t>
+                Nous limitons le nombre d'utilisateurs du système à 120. Le nombre d'utilisateurs dans les movie room 
+                n'est pas restreint dans la mesure où la première condition est respectée. 
+              </t>
+              
+              <t>
+                Les éléments qui suivent doivent être conservées par le serveur : 
+                <list counter="reqs" hangIndent="2">
+							    <t>
+                     L'ID_MSG du dernier paquet recu de chaque utilisateur, ainsi que la liste leurs Username et status.</t>
+                  <t>
+                    La liste des films avec les adresses IP et ports des serveurs sur lesquels ils sont disponibles. 
+                  </t>
+						    </list>
+              </t>
+            </section>
+        </section>
+   </section>
+
+   <section title="Scénarios d'utilisation">
+		<t> 
+			Dans cette partie, nous décrivons quelques exemples de scénarios d'utilsation 
+			de notre protocole par l'application C2W.
+		</t>
+
+		<section title="Connexion au serveur">
+			<section title="Scenario idéal">
+				<t>
+					<figure>
+					  <artwork>
+	Supposons qu'Alice veut se connecter au serveur et que l'authentification se déroule correctement. 
+				On constatera les échanges suivants:
+
+                Alice                                            Serveur
+                    |                                               |
+                    |               Message 1 (Type AUT)            |
+                    |----------------------------------------------&gt;|
+                    |                (Authentification)             |
+                    |                                               |
+                    |                                               |
+                    |             Message (Type MSG_REC)            |
+                    |&lt;----------------------------------------------|
+                    |             (Acquittement message 1)          |
+                    |                                               |
+                    |             Message 2 (Type AUT_R)            |
+                    |&lt;----------------------------------------------|
+                    |            (Authentification réussie)         |
+                    |                                               |					
+                    |               Message (Type MSG_REC)          |
+                    |----------------------------------------------&gt;|
+                    |              (Acquittement message 2)         |
+						</artwork>
+					</figure>
+				</t>
+			</section>
+			<section title="Scénarios avec erreurs">
+				<t> 
+					<figure>
+						<artwork>
+					Si un utilisateur se connecte avec un nom d'utilisateur existant 
+          ou n'étant pas alphanumérique ou lorsque le serveur est saturé,
+					on aura le scénario suivant:
+                Alice                                            Serveur
+                    |                                               |
+                    |               Message 1 (Type AUT)            |
+                    |----------------------------------------------&gt;|
+                    |                (Authentification)             |
+                    |                                               |
+                    |             Message (Type MSG_REC)            |
+                    |&lt;----------------------------------------------|
+                    |             (Acquittement message 1)          |
+                    |                                               |
+                    |             Message 2 (Type AUT_E)            |
+                    |&lt;----------------------------------------------|
+                    |            (Echec Authentification)           |
+                    |                                               |					
+                    |            Message (Type MSG_REC)             |
+                    |----------------------------------------------&gt;|
+                    |              (Acquittement message 2)         |
+						</artwork>
+					</figure>
+				</t>
+				<t>
+					<figure>
+						<artwork>
+			Si un message émis ne parvient pas au destinataire c'est-à-dire que 
+      l'emetteur ne reçoit pas d'acquittement, après 4 secondes le 
+      message est retransféré .
+				
+                Alice                                            Serveur
+                    |                                               |
+                    |             Message 1 (Type AUT)              |
+                    |------------------------------------x          |
+                    |              (Authentification)               |
+                    |                                               |
+                    |              4 secondes plus tard             |
+                    |              Message 1 (Type AUT)             |
+                    |----------------------------------------------&gt;|
+                    |              (Authentification)               |
+                    |                                               |
+                    |             Message (Type MSG_REC)            |
+                    |&lt;----------------------------------------------|
+                    |             (Acquittement message 1)          |
+                    |                                               |
+                    |             Message 2 (Type AUT_R)            |
+                    |         x-------------------------------------|
+                    |            ( Authentification Réussie)        |
+                    |                                               |
+                    |              4 secondes plus tard             |
+                    |             Message 2 (Type AUT_R)            |
+                    |&lt;----------------------------------------------|
+                    |             (Authentification Réussie)        |					
+                    |            Message (Type MSG_REC)             |
+                    |----------------------------------------------&gt;|
+                    |              (Acquittement message 2)         |
+						</artwork>
+					</figure>
+				</t>
+			</section>
+    </section>
+        
+    <section title="Chat dans la Main Room">
+		<section title="Scenario idéal">
+			<t>
+				<figure>
+					<artwork>
+	Supposons qu'Alice est désormais connectée au serveur,on pourrait avoir les échanges suivants:
+
+                Alice                                            Serveur
+                    |                                               |
+                    |           Message 1 (Type LIST_FILM)          |
+                    |&lt;----------------------------------------------|
+                    |                (Liste des films)              |
+                    |                                               |
+                    |            Message (Type MSG_REC)             |
+                    |----------------------------------------------&gt;|
+                    |              (Acquittement message 1)         |
+                    |                                               |
+                    |           Message 2 (Type LIST_USER)          |
+                    |&lt;----------------------------------------------|
+                    |            (Liste des utilisateurs)           |
+                    |                                               |
+                    |            Message (Type MSG_REC)             |
+                    |----------------------------------------------&gt;|
+                    |              (Acquittement message 2)         |
+                    |                                               |
+                    |           Message 3(Type SELECT_FILM)         |
+                    |----------------------------------------------&gt;|
+                    |                (Choix d'un film)              |
+                    |                                               |						
+                    |               Message (Type MSG_REC)          |
+                    |&lt;----------------------------------------------|
+                    |              (Acquittement message 2)         |
+					</artwork>
+				</figure>
+			</t>
+		</section>
+        <section title="Scénario avec erreurs">
+			<t> Les erreurs pouvant se produire sont relatifs à la non reception d'un acquittement.
+			</t>
+		</section>
+    </section>
+
+    <section title="Chat dans la Movie Room">
+		<section title="Scenario idéal">
+		<t>
+			<figure>
+					<artwork>
+		Supposons que Bob, Alice et Claude sont tous les 3 dans la même Movie 
+    Room, on pourrait avoir les échanges suivants:
+
+Claude Bob 	Alice                                        Serveur
+				|			|			|                                               |
+				|			|			|              Message 1 (Type MARC)            |
+				|			|			|----------------------------------------------&gt;|
+				|			|			|         (Meassage dans la Movie Room)         |
+				|			|			|                                               |
+				|			|			|            Message (Type MSG_REC)             |
+				|			|			|&lt;----------------------------------------------|
+				|			|			|              (Acquittement message 1)         |
+				|			|			|                                               |
+				|			|			|           Message 2 (Type MARC_DIFF)          |
+				|			|			|&lt;----------------------------------------------|
+				|			|&lt;--------------------------------------------------|
+				|&lt;------------------------------------------------------|
+				|             (Diffusion message dans la movie room)    |
+    |                                                       |			
+				|			|			|            Message (Type MSG_REC)             |
+				|			|			|----------------------------------------------&gt;|
+				|			|--------------------------------------------------&gt;|
+				|------------------------------------------------------&gt;|
+				|			 			               (Acquittement message 2)         |
+				|			|			|                                               |
+				|			|			|           Message 3(Type LEAVE_MOR)           |
+				|			|			|----------------------------------------------&gt;|
+				|			|			|          (Quitter la movie room)              |
+				|			|			|                                               |						
+				|			|			|               Message (Type MSG_REC)          |
+				|			|			|&lt;----------------------------------------------|
+				|			|			|              (Acquittement message 3)         |
+		
+					</artwork>
+				</figure>
+			</t>
+		</section>
+        <section title="Scénario avec erreurs">
+		<t> Les erreurs pouvant se produire sont relatifs à la non reception d'un acquittement.</t>
+		</section>
+    </section>
+
+     
+    </section> <!--End of examples-->
+
+    <section title="Conclusion">
+        <t>
+            En définitive, retenons que la spécification que nous proposons vise à rendre autant efficace
+            que robuste le protocole C2W. Les différents types de messages, les acquittements, le protocole 
+            ARQ à fenêtre glissante et les différentes caractéristiques du serveur sont autant d'éléments 
+            que nous avons utilisés afin de parvenir à cette fin.
+        </t>
+    </section>
+  </middle>
+</rfc>

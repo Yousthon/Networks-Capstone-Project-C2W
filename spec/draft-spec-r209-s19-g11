@@ -1,0 +1,616 @@
+
+
+
+
+                                                KC. KOUASSI ET COULIBALY
+                                                        Telecom Bretagne
+                                                       february 28, 2019
+
+
+             Group 11: c2w protocol specification proposal
+                     draft-ietf-xml2rfc-template-05
+
+Abstract
+
+   Ce document est une proposition d'une version texte du protocole de
+   communication c2w.  L'objectif de ce protocole est de permettre a
+   plusieurs utilisateurs de se connecter a un serveur offrant plusieurs
+   flux videos, de selectionner une video et de causer avec les autres
+   utilisateurs regardant la meme video.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Format des paquets  . . . . . . . . . . . . . . . . . . . . .   3
+     2.1.  Description generale  . . . . . . . . . . . . . . . . . .   3
+     2.2.  Description detaillee . . . . . . . . . . . . . . . . . .   4
+       2.2.1.  Formats des paquets echanges lors de la connexion au
+               serveur . . . . . . . . . . . . . . . . . . . . . . .   5
+         2.2.1.1.  Authentification : message du type 'AUT'  . . . .   5
+         2.2.1.2.  Authentification reussie: message du type 'AUT_R'   5
+         2.2.1.3.  Authentification echouee : message du type
+                   'AUT_E' . . . . . . . . . . . . . . . . . . . . .   5
+       2.2.2.  Formats des paquets echanges dans la 'Main Room'  . .   5
+         2.2.2.1.  Liste des films disponibles: message du type
+                   'LIST_FILM' . . . . . . . . . . . . . . . . . . .   5
+         2.2.2.2.  Liste des utlisateurs dans la Main Room: message
+                   du type 'LIST_USER_MAR' . . . . . . . . . . . . .   5
+         2.2.2.3.  Message de chat dans la Main Room : message du
+                   type 'MARC' . . . . . . . . . . . . . . . . . . .   5
+         2.2.2.4.  Selectionner un film disponible dans la Main Room
+                   : message du type 'SELECT_FILM' . . . . . . . . .   5
+         2.2.2.5.  Quitter la main Room : message du type
+                   'LEAVE_MAR' . . . . . . . . . . . . . . . . . . .   6
+       2.2.3.  Formats des paquets echanges dans la 'Movie Room' . .   6
+         2.2.3.1.  Liste des utlisateurs dans la Movie Room: message
+                   du type 'LIST_USER_MORC'  . . . . . . . . . . . .   6
+         2.2.3.2.  Message de chat dans la Movie Room : message du
+                   type 'MORC' . . . . . . . . . . . . . . . . . . .   6
+         2.2.3.3.  Quitter la mOVIE Room : message du type
+                   'LEAVE_MORC'  . . . . . . . . . . . . . . . . . .   6
+   3.  Fiabilisation . . . . . . . . . . . . . . . . . . . . . . . .   6
+     3.1.  Gestion de la fiabilite . . . . . . . . . . . . . . . . .   6
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 1]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+     3.2.  protocole a fenetre d'anticipation  . . . . . . . . . . .   6
+     3.3.  specificite du serveur  . . . . . . . . . . . . . . . . .   6
+   4.  exemples de scenarios . . . . . . . . . . . . . . . . . . . .   6
+     4.1.  scenarios ideaux  . . . . . . . . . . . . . . . . . . . .   6
+       4.1.1.  Scenario ideal 1: Connexion au serveur  . . . . . . .   6
+       4.1.2.  Scenario ideal 2: Chat dans la Main Room  . . . . . .   6
+       4.1.3.  Scenario ideal 3: Chat dans la Movie Room . . . . . .   6
+     4.2.  Gestion des erreurs . . . . . . . . . . . . . . . . . . .   6
+   5.  Conclusion  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   6.  xml2rfc Features  . . . . . . . . . . . . . . . . . . . . . .   7
+   7.  Simple List . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   8.  Figures . . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   9.  Subsections and Tables  . . . . . . . . . . . . . . . . . . .   8
+     9.1.  A Subsection  . . . . . . . . . . . . . . . . . . . . . .   8
+     9.2.  Tables  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+   10. More about Lists  . . . . . . . . . . . . . . . . . . . . . .   8
+     10.1.  Numbering Lists across Lists and Sections  . . . . . . .   9
+     10.2.  Where the List Numbering Continues . . . . . . . . . . .   9
+   11. Example of Code or MIB Module To Be Extracted . . . . . . . .  10
+   12. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  11
+   13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     13.1.  Normative References . . . . . . . . . . . . . . . . . .  11
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Additional Stuff . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   Le protocole c2w doit pouvoir utiliser TCP ou UDP, et etre capable de
+   supporter toutes les exigences de communication de l'application,
+   c'est-a-dire qu'il doit definir tous les messages necessaires pour
+   realiser les etapes decrites ci-dessous : L'application c2w
+   fonctionne comme suit:
+
+      1. sa fenetre d'enregistrement dans laquelle sont indiques le nom
+      (ou l'adresse IP) et le numero de port de l'utilisateur du serveur
+      ainsi que son nom d'utilisateur.
+
+      2. si la connexion est reussie, elle affiche une nouvelle fenetre
+      dans la "piece principale".  Cette fenetre affiche la liste de
+      tous les utilisateurs du systeme (en precisant s'ils sont
+      disponibles "A" (c'est-a-dire dans la salle principale) ou s'ils
+      sont dans une salle "M").
+
+      3.  Lorsque l'utilisateur decide de rejoindre l'un des films,
+      l'application affiche une troisieme fenetre avec la liste de tous
+      les utilisateurs dans cette salle specifique, la video
+      correspondante, une zone de chat et une zone de saisie de texte,
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 2]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+      ou l'utilisateur peut saisir des messages a d'autres utilisateurs
+      regardant le meme film.
+
+      4.Le film et la fenetre principale ont un bouton leave que
+      l'utilisateur peut appuyer.  Si l'utilisateur se trouve dans une
+      salle de cinema, il retourne dans la salle principale.  Si
+      l'utilisateur se trouve dans la piece principale, il quitte le
+      systeme (retour a la fenetre de connexion).
+
+   C'est donc cela que nous nous attelerons a gerer dans la suite de ce
+   document.
+
+2.  Format des paquets
+
+   A ce niveau,nous decrivons les differents formats de messages qui
+   seront echanges entre les utilisateurs et le serveur.
+
+2.1.  Description generale
+
+   Les echanges entre les utilisateurs et le serveur seront geres par
+   l'echange de plusieurs paquets.  Ci-dessous, nous montrons le format
+   general de ces paquets:
+
+   <TAILLE>:<TYPE>:<ID_MSG>:<MESSAGE>:<CRLF>
+
+   Ci-dessous, nous decrivons les differents elements du format des
+   messages echanges :
+
+      TAILLE : il s'agit du nombre de caracteres total du message envoye
+
+      TYPE : c'est un identifiant qui determine le type de message
+      envoye.  Les differents types sont listes dans le tableau 1 ci-
+      dessous.
+
+      ID_MSG : Ce champ represente le numero du paquet envoye.  Il est
+      initialise a 1 et incremente a chaque nouvelle emission.Il permet
+      d'identifier de facon unique chaque paquet.  Il permet de
+      controler les envois et receptions afin de gerer l'ordre et les
+      pertes de paquets.  Dans la partie relative a la fiabilite, nous
+      decrivons son importance.
+
+      MESSAGE : Ce champ englobe toutes les donnees du message que
+      l'emetteur (seveur ou utilisateur) souhaite envoyer.
+
+      CRLF : CR represente le caractere ASCII "Carriage Return" (code
+      decimal ASCII 13) et LF represente le caractere ASCII "Line Feed"
+      (code decimal ASCII 10).  Ce champ marque la fin du paquet envoye.
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 3]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+     Le tableau 1 ci-dessous presente les differents types de messages
+               echanges entre les utilisateurs et le srveur.
+
+   +----------------+--------------------------------------------------+
+   |      TYPE      |                    DEFINITION                    |
+   +----------------+--------------------------------------------------+
+   |      AUT       |    Authentification du client par le serveur     |
+   |    MSG_REC     |           Message recu (Acquittement)            |
+   |     AUT_R      |             Authentification reussie             |
+   |     AUT_E      |           Echec de l'authentification            |
+   |   LIST_FILM    |           Liste des films disponibles            |
+   | LIST_USER_MAR  |   Liste des utilisateurs presents dans la Main   |
+   |                |                       Room                       |
+   |      MARC      |        Message de chat dans la Main Room         |
+   |   LEAVE_MAR    |        Message pour quitter la Main Room         |
+   |  SELECT_FILM   |   Selectionner un film disponible dans la Main   |
+   |                |                       Room                       |
+   | LIST_USER_MORC |    Liste des utilisateurs dans la Movie Room     |
+   |      MORC      |        Message de chat dans la Movie Room        |
+   |   LEAVE_MOR    |        Message pour quitter la Movie Room        |
+   +----------------+--------------------------------------------------+
+
+                  Table 1: Les types de messages echanges
+
+2.2.  Description detaillee
+
+   A ce niveau, nous decrivons de facon detaillee les types de messages
+   echanges entre les utilisateurs et le serveur dans 3 cas : lors de la
+   connexion au serveur, des echanges au niveau de la 'Main Room' et des
+   echanges au niveau des 'Movie Rooms'.  Puisque les paquets de type
+   'MSG_REC' seront utilises dans ces 3 cas, nous les decrirons dans un
+   premier temps.
+
+   Un paquet de type 'MSG_REC' est en effet un paquet envoye d'un client
+   vers le serveur ou du serveur vers un client, qui represente un
+   acquittement.  Il pemet au destinataire de s'assurer qu'un paquet
+   numerote ID_MSG a ete recu par l'emetteur.  Le format de ce paquet
+   est le suivant :
+
+   <TAILLE>:<TYPE>:<ID_MSG>:<CRLF>
+
+   Ci-dessous, nous decrivons les differents elements du format de ce
+   message :
+
+      TYPE : MSG_REC pour dire que le paquet est un acquittement.
+
+
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 4]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+      ID_MSG : Il s'agit de l'identifiant du dernier message recu dont
+      le type est different de 'MSG_REC', c'est-a-dire le dernier
+      message recu qui n'est pas un acquittement.
+
+2.2.1.  Formats des paquets echanges lors de la connexion au serveur
+
+   Lors de la connexion du client au serveur, plusieurs paquets sont
+   echanges.  Il s'agit notamment des messages de types AUT, AUT_E,
+   AUT_R, et MSG_REC.
+
+2.2.1.1.  Authentification : message du type 'AUT'
+
+   : message du type 'AUT'.
+
+2.2.1.2.  Authentification reussie: message du type 'AUT_R'
+
+   : message du type 'AUT'.
+
+2.2.1.3.  Authentification echouee : message du type 'AUT_E'
+
+   : message du type 'AUT'.
+
+2.2.2.  Formats des paquets echanges dans la 'Main Room'
+
+   Dans la 'Main Room', plusieurs messages sont egalement echanges entre
+   les utilisateurs et le serveur.  Il s'agit notamment des messages de
+   types LIST_FILM, MSG_REC, LIST_USER_MAR, MARC, SELECT_FILM et
+   LEAVE_MAR.
+
+2.2.2.1.  Liste des films disponibles: message du type 'LIST_FILM'
+
+   : message du type 'AUT'.
+
+2.2.2.2.  Liste des utlisateurs dans la Main Room: message du type
+          'LIST_USER_MAR'
+
+   : message du type 'AUT'.
+
+2.2.2.3.  Message de chat dans la Main Room : message du type 'MARC'
+
+   : message du type 'AUT'.
+
+2.2.2.4.  Selectionner un film disponible dans la Main Room : message du
+          type 'SELECT_FILM'
+
+   : message du type 'AUT'.
+
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 5]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+2.2.2.5.  Quitter la main Room : message du type 'LEAVE_MAR'
+
+   : message du type 'AUT'.
+
+2.2.3.  Formats des paquets echanges dans la 'Movie Room'
+
+   Dans la 'Main Room', plusieurs messages sont egalement echanges entre
+   les utilisateurs et le serveur.  Il s'agit notamment des messages de
+   types MSG_REC, LIST_USER_MORC, MORC et LEAVE_MOR.
+
+2.2.3.1.  Liste des utlisateurs dans la Movie Room: message du type
+          'LIST_USER_MORC'
+
+   : message du type 'AUT'.
+
+2.2.3.2.  Message de chat dans la Movie Room : message du type 'MORC'
+
+   : message du type 'AUT'.
+
+2.2.3.3.  Quitter la mOVIE Room : message du type 'LEAVE_MORC'
+
+   : message du type 'AUT'.
+
+3.  Fiabilisation
+
+3.1.  Gestion de la fiabilite
+
+3.2.  protocole a fenetre d'anticipation
+
+3.3.  specificite du serveur
+
+4.  exemples de scenarios
+
+4.1.  scenarios ideaux
+
+4.1.1.  Scenario ideal 1: Connexion au serveur
+
+4.1.2.  Scenario ideal 2: Chat dans la Main Room
+
+4.1.3.  Scenario ideal 3: Chat dans la Movie Room
+
+4.2.  Gestion des erreurs
+
+
+
+
+
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 6]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+           MSG 1 from toto to titi etc
+           You can also use a figure like this:
+
+        Alice                                            Bob
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |            (details of the message)           |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |<----------------------------------------------|
+           |                   (Details)                   |
+
+
+5.  Conclusion
+
+   Your conclusion goes here.
+
+6.  xml2rfc Features
+
+   In this sample file, the following sections show how to use some of
+   the features of supported by xml2rfc.  This is a non-exhaustive list.
+   It is up to each group to decide which of these features (if any) to
+   use in the protocol specification.
+
+   This document is a modified version of the Internet-Draft template by
+   Elwyn Davies, available on the IETF website [IDSample].
+
+7.  Simple List
+
+   List styles: 'empty', 'symbols', 'letters', 'numbers', 'hanging',
+   'format'.
+
+   o  First bullet
+
+   o  Second bullet
+
+   You can write text here as well.
+
+8.  Figures
+
+   Figures should not exceed 69 characters wide to allow for the indent
+   of sections.
+
+
+
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 7]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+                 Preamble text - can be omitted or empty.
+
+   +-----------------------+
+   | Use XML, be Happy :-) |
+   |_______________________|
+
+        Cross-references allowed in pre- and postamble. [min_ref].
+
+                                 Figure 1
+
+   The CDATA means you don't need to escape meta-characters (especially
+   <(&lt;) and &(&amp;)) but is not essential.  Figures may also have a
+   title attribute but it won't be displayed unless there is also an
+   anchor.  White space, both horizontal and vertical, is significant in
+   figures even if you don't use CDATA.
+
+9.  Subsections and Tables
+
+9.1.  A Subsection
+
+   By default 3 levels of nesting show in table of contents but that can
+   be adjusted with the value of the "tocdepth" processing instruction.
+
+9.2.  Tables
+
+   .. are very similar to figures:
+
+     Tables use ttcol to define column headers and widths.  Every cell
+                  then has a "c" element for its content.
+
+                          +----------+----------+
+                          | ttcol #1 | ttcol #2 |
+                          +----------+----------+
+                          |   c #1   |   c #2   |
+                          |   c #3   |   c #4   |
+                          |   c #5   |   c #6   |
+                          +----------+----------+
+
+                      which is a very simple example.
+
+                       Table 2: A Very Simple Table
+
+10.  More about Lists
+
+   Lists with 'hanging labels': the list item is indented the amount of
+   the hangIndent:
+
+   short   With a label shorter than the hangIndent.
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 8]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+   fantastically long label  With a label longer than the hangIndent.
+
+   vspace_trick
+           Forces the new item to start on a new line.
+
+   Simulating more than one paragraph in a list item using <vspace>:
+
+   a.  First, a short item.
+
+   b.  Second, a longer list item.
+
+       And something that looks like a separate pararaph..
+
+   Simple indented paragraph using the "empty" style:
+
+      The quick, brown fox jumped over the lazy dog and lived to fool
+      many another hunter in the great wood in the west.
+
+10.1.  Numbering Lists across Lists and Sections
+
+   Numbering items continuously although they are in separate <list>
+   elements, maybe in separate sections using the "format" style and a
+   "counter" variable.
+
+   First list:
+
+   R1  #1
+
+   R2  #2
+
+   R3  #3
+
+   Specify the indent explicitly so that all the items line up nicely.
+
+   Second list:
+
+   R4  #4
+
+   R5  #5
+
+   R6  #6
+
+10.2.  Where the List Numbering Continues
+
+   List continues here.
+
+   Third list:
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019               [Page 9]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+   R7  #7
+
+   R8  #8
+
+   R9  #9
+
+   R10 #10
+
+   The end of the list.
+
+11.  Example of Code or MIB Module To Be Extracted
+
+   The <artwork> element has a number of extra attributes that can be
+   used to substitute a more aesthetically pleasing rendition into HTML
+   output while continuing to use the ASCII art version in the text and
+   nroff outputs (see the xml2rfc README for details).  It also has a
+   "type" attribute.  This is currently ignored except in the case
+   'type="abnf"'.  In this case the "artwork" is expected to contain a
+   piece of valid Augmented Backus-Naur Format (ABNF) grammar.  This
+   will be syntax checked by xml2rfc and any errors will cause a fatal
+   error if the "strict" processing instruction is set to "yes".  The
+   ABNF will also be colorized in HTML output to highlight the syntactic
+   components.  Checking of additional "types" may be provided in future
+   versions of xml2rfc.
+
+
+   /**** an example C program */
+
+   #include <stdio.h>
+
+   void
+   main(int argc, char *argv[])
+   {
+       int i;
+
+       printf("program arguments are:\n");
+       for (i = 0; i < argc; i++) {
+           printf("%d: \"%s\"\n", i, argv[i]);
+       }
+
+       exit(0);
+   } /* main */
+
+   /* end of file */
+
+
+
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019              [Page 10]
+
+                      C2W Spec Proposal - Group 11         february 2019
+
+
+12.  Acknowledgements
+
+   This template was derived from an initial version written by Pekka
+   Savola and contributed by him to the xml2rfc project.
+
+   This document is part of a plan to make xml2rfc indispensable
+   [DOMINATION].
+
+13.  References
+
+13.1.  Normative References
+
+   [min_ref]  authSurName, authInitials., "Minimal Reference", 2006.
+
+13.2.  Informative References
+
+   [DOMINATION]
+              Mad Dominators, Inc., "Ultimate Plan for Taking Over the
+              World", 1984, <http://www.example.com/dominator.html>.
+
+   [IDSample]
+              Davies, E., "Internet Draft Sample", 2006,
+              <http://tools.ietf.org/tools/templates/
+              draft-davies-template-bare.txt>.
+
+Appendix A.  Additional Stuff
+
+   This becomes an Appendix.
+
+Author's Address
+
+   KOUASSI BAUDOUIN ET COULIBALY FANFOL
+   Telecom Bretagne
+   Brest, Bretagne
+   France
+
+   Email: beyegbin-baudouin-venceslas.kouassi@imt-atlantique.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KOUASSI ET COULIBALY    Expires September 1, 2019              [Page 11]
